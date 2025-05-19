@@ -1,30 +1,35 @@
-import Bootstrap from '@/components/bootstrap/Bootstrap'
-import Preloader from '@/components/preloader/Preloader'
-import HomeFilterOptions from '@/components/common/HomeFilterOptions'
+import Bootstrap from "@/components/bootstrap/Bootstrap";
+import Preloader from "@/components/preloader/Preloader";
+import HomeFilterOptions from "@/components/common/HomeFilterOptions";
 // modal video
-import 'node_modules/react-modal-video/scss/modal-video.scss'
+import "node_modules/react-modal-video/scss/modal-video.scss";
 
 // slick css
-import 'slick-carousel/slick/slick.css'
+import "slick-carousel/slick/slick.css";
 
 // react-datepicker css
-import 'react-datepicker/dist/react-datepicker.css'
+import "react-datepicker/dist/react-datepicker.css";
 
 // react range slider css
-import 'react-range-slider-input/dist/style.css'
+import "react-range-slider-input/dist/style.css";
+
+// ** Provider
+// import Providers from '@/components/provider/Providers' // ✅ Now it's a default export
+import { Providers } from "@/components/provider/Provider";
 
 //main css
-import '../styles/main.scss'
+import "../styles/main.scss";
+// import { AuthProvider } from '@/components/provider/AuthProvider'
 
 export const metadata = {
-  title: 'Latcontecta - Recharge & Bill Payment',
-  description: 'Recharge & Bill Payment',
-}
+  title: "Recharge & Bill Payment",
+  description: "Recharge & Bill Payment",
+};
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html lang="en">
@@ -38,14 +43,16 @@ export default function RootLayout({
         />
       </head>
       <body suppressHydrationWarning={true}>
-        <>
+        <Providers>
+          {/* <AuthProvider> */}
           <Bootstrap>
             {/* Preloader */}
             <Preloader />
             {children}
           </Bootstrap>
-        </>
+          {/* </AuthProvider> */}
+        </Providers>
       </body>
     </html>
-  )
+  );
 }

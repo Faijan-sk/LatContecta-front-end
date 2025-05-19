@@ -1,5 +1,9 @@
-import Banner from '@/components/home/Banner'
+"use client";
 
-export default function Home() {
-  return <Banner />
+import Banner from "@/components/home/Banner";
+
+function Home() {
+  return <Banner />;
 }
+
+export default Home;
