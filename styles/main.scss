@@ -1,0 +1,69 @@
+/*CSS Table Of Content Starts Here*/
+/*
+//Css
+@import "bootstrap.min.css";
+@import "odometer.min.css";
+@import "animate.css";
+@import "magnific-popup.min.css";
+@import "google-font.css";
+@import "owl.carousel.min.css";
+@import "owl.theme.default.css";
+@import "prism.css";
+//Css
+
+
+@import "_abstracts/_mixins";
+@import "_abstracts/_variables";
+@import "_base/_typography";
+@import "_layout/_header";
+@import "_layout/_banner";
+@import "_layout/_section";
+@import "_layout/_animation";
+---------------------------
+Section css
+---------------------------
+*/
+/*CSS Table Of Content Ends Here*/
+
+//--Css Structur--//
+
+// --Google-font.min.css--//
+@import "../public/css/google-font.css";
+//--Animate.css--//
+@import "../public/css/animate.css";
+//--Bootstrap scss--//
+@import "../node_modules/bootstrap/scss/bootstrap.scss";
+
+//--Abstracts--//
+@import "./_components/_function.scss";
+@import "./_abstracts/_mixins.scss";
+@import "./_abstracts/_variables.scss";
+//--Abstracts--//
+
+// --React-Select--//
+@import "./_react-select/select";
+// --React-Select--//
+
+//--Base--//
+@import "./_base/_typography.scss";
+//--Base--//
+
+//--Layout--//
+@import "./_layout/_header.scss";
+@import "./_layout/_banner.scss";
+@import "./_layout/_blog.scss";
+@import "./_layout/_signup.scss";
+@import "./_layout/_elements.scss";
+@import "./_layout/_personal.scss";
+@import "./_layout/_section.scss";
+@import "./_layout/_animation.scss";
+@import "./_layout/_footer.scss";
+//--Layout--//
+
+//--Components--//
+@import "./_components/_buttons.scss";
+//--Components--//
+
+//--Base--//
+@import "./_base/_responsive.scss";
+//--Base--//
