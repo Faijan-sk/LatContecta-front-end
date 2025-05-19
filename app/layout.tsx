@@ -17,7 +17,7 @@ import 'react-range-slider-input/dist/style.css'
 import '../styles/main.scss'
 
 export const metadata = {
-  title: 'Recharge & Bill Payment',
+  title: 'Latcontecta - Recharge & Bill Payment',
   description: 'Recharge & Bill Payment',
 }
 

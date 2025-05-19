@@ -1,5 +1,7 @@
 'use client'
-import Addimg from '@/public/img/banner/addOne.webp'
+import AddimgOne from '@/public/img/banner/mobile_recharge_ad.jpg'
+import AddimgTwo from '@/public/img/banner/mobile_recharge_ad_3.jpg'
+
 import Image, { StaticImageData } from 'next/image'
 import { useRef } from 'react'
 import Slider from 'react-slick'
@@ -11,6 +13,10 @@ interface SliderProps {
     img: StaticImageData
   }[]
 }
+const sliderData = [
+  { id: 1, img: { AddimgOne } },
+  { id: 2, img: { AddimgTwo } },
+]
 
 const PaymentSponsorSlider = ({ sliderData }: SliderProps) => {
   const sliderRef = useRef(null)
@@ -37,7 +43,7 @@ const PaymentSponsorSlider = ({ sliderData }: SliderProps) => {
                   width: '100%',
                   height: '47vh',
                 }}
-                src={Addimg}
+                src={AddimgTwo}
                 alt="img"
               />
             </div>

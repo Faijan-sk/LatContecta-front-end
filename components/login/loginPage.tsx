@@ -9,12 +9,15 @@ const LoginPage = () => {
   const router = useRouter()
   const [username, setUsername] = useState('')
   const [otp, setOtp] = useState(['', '', '', ''])
+  
+
   const inputRefs = [
     useRef<HTMLInputElement>(null),
     useRef<HTMLInputElement>(null),
     useRef<HTMLInputElement>(null),
     useRef<HTMLInputElement>(null),
   ]
+
 
   const handleOtpChange = (index: number, value: string) => {
     if (value.length > 1) return // Prevent multiple digits
@@ -85,7 +88,7 @@ const LoginPage = () => {
                       />
                     </div>
                   </div>
-                  <div className="col-lg-6">
+                  {/* <div className="col-lg-6">
                     <div className="input__grp">
                       <label>Enter Your OTP</label>
                       <div
@@ -110,10 +113,10 @@ const LoginPage = () => {
                         ))}
                       </div>
                     </div>
-                  </div>
-                  <Link href="/login/forgetPassword" className="forgot">
+                  </div> */}
+                  {/* <Link href="/login/forgetPassword" className="forgot">
                     Forgot Password?
-                  </Link>
+                  </Link> */}
                   <div className="col-lg-12">
                     <div className="input__grp">
                       <button type="submit" className="cmn__btn">

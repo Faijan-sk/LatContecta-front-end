@@ -3,16 +3,9 @@ import Select from '../select/Select'
 
 const operator = [
   { id: 1, name: 'Select Your Operator' },
-  { id: 2, name: '1st Operator' },
-  { id: 3, name: '2nd Operator' },
-  { id: 4, name: '3rd Operator' },
-]
-
-const offers = [
-  { id: 1, name: 'Select offers' },
-  { id: 2, name: '1st Offers' },
-  { id: 3, name: '2nd Offers' },
-  { id: 4, name: '3rd Offers' },
+  { id: 2, name: 'Telcel' },
+  { id: 3, name: 'AT & T' },
+  { id: 4, name: 'Movistara' },
 ]
 
 const RechargePaymentbox = ({ title }: { title: string }) => {
@@ -47,19 +40,16 @@ const RechargePaymentbox = ({ title }: { title: string }) => {
 
       <form action="URL:void(0)" className="pb__40">
         <div className="row g-4">
-          <div className="col-lg-8">
-            <input type="text" placeholder="Enter Your Account Number ..." />
+          <div className="col-lg-12">
+            <input type="number" placeholder="Enter Your Mobile Number ..." />
           </div>
-          <div className="col-lg-4">
-            <input type="text" placeholder="Enter Ammount" />
-          </div>
-          <div className="col-lg-4">
+          <div className="col-lg-6">
             {/* select here */}
             <Select data={operator} />
           </div>
-          <div className="col-lg-8">
-            {/* select here */}
-            <input type="number" placeholder="Enter Mobile" />
+
+          <div className="col-lg-6">
+            <input type="text" placeholder="Enter Ammount" />
           </div>
         </div>
       </form>
