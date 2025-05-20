@@ -1,173 +1,188 @@
-'use client'
+"use client";
 
-import { useState, ChangeEvent, useEffect } from 'react'
-import Image from 'next/image'
-import Link from 'next/link'
-import Select from '../select/Select'
-import ata5g from '/public/img/payment/ata5g.png'
-import Att from './../../public/img/operators/finalAtt.jpg'
-import Telcel from './../../public/img/operators/TelcelforEdit.png'
-import Movistar from './../../public/img/operators/movistar-logo-marcas-1.webp'
-import EditIcon from './../../public/img/pngFiles/edit_pencil.png'
-import Mexico from './../../public/img/operators/Mexico_png.png'
+import { useState, ChangeEvent, useEffect, Key } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import Select from "../select/Select";
+
+import Att from "./../../public/img/operators/finalAtt.jpg";
+import Telcel from "./../../public/img/operators/TelcelforEdit.png";
+import Movistar from "./../../public/img/operators/movistar-logo-marcas-1.webp";
+import EditIcon from "./../../public/img/pngFiles/edit_pencil.png";
+import Mexico from "./../../public/img/operators/Mexico_png.png";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/rootReducer";
+
+import PlansCard from "./PlansCard";
 
 const choose = [
-  { id: 1, name: 'Choose a value' },
-  { id: 2, name: 'Top-UP' },
-  { id: 3, name: 'Recharge' },
-]
+  { id: 1, name: "Choose a value" },
+  { id: 2, name: "Top-UP" },
+  { id: 3, name: "Recharge" },
+];
 
 const code = [
-  { id: 1, name: '1' },
-  { id: 2, name: '2' },
-  { id: 3, name: '3' },
-  { id: 4, name: '4' },
-]
+  { id: 1, name: "1" },
+  { id: 2, name: "2" },
+  { id: 3, name: "3" },
+  { id: 4, name: "4" },
+];
 
 const code2 = [
-  { id: 1, name: '1' },
-  { id: 2, name: '2' },
-  { id: 3, name: '3' },
-  { id: 4, name: '4' },
-]
+  { id: 1, name: "1" },
+  { id: 2, name: "2" },
+  { id: 3, name: "3" },
+  { id: 4, name: "4" },
+];
 
 const code3 = [
-  { id: 1, name: '1' },
-  { id: 2, name: '2' },
-  { id: 3, name: '3' },
-  { id: 4, name: '4' },
-]
+  { id: 1, name: "1" },
+  { id: 2, name: "2" },
+  { id: 3, name: "3" },
+  { id: 4, name: "4" },
+];
 
 // Define operator type
 interface Operator {
-  id: number
-  name: string
-  image: any // Use StaticImageData type if you import your images properly
+  id: number;
+  name: string;
+  image: any; // Use StaticImageData type if you import your images properly
 }
 
 // Sample list of operators for the dropdown
 const operators: Operator[] = [
-  { id: 1, name: 'AT&T', image: Att },
-  { id: 2, name: 'Telcel', image: Telcel },
-  { id: 3, name: 'Movistar', image: Movistar },
-]
+  { id: 1, name: "AT&T", image: Att },
+  { id: 2, name: "Telcel", image: Telcel },
+  { id: 3, name: "Movistar", image: Movistar },
+];
 
 const Packages = () => {
   // State for edit mode, phone number and selected operator
-  const [isEditing, setIsEditing] = useState<boolean>(false)
-  const [phoneNumber, setPhoneNumber] = useState<string>('+52 9999999999')
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [phoneNumber, setPhoneNumber] = useState<string>("+52 9999999999");
   const [selectedOperator, setSelectedOperator] = useState<Operator>({
     id: 1,
-    name: 'AT&T',
+    name: "AT&T",
     image: Att,
-  })
+  });
+  const [filterType, setFilterType] = useState<number>(1);
   // Add state for mobile detection
-  const [isMobile, setIsMobile] = useState<boolean>(false)
+  const [isMobile, setIsMobile] = useState<boolean>(false);
+
+  // ** State
+  const plans = useSelector((store: RootState) => store.plans);
 
   // Add useEffect for mobile detection
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 768) // Set your mobile breakpoint
-    }
+      setIsMobile(window.innerWidth < 768); // Set your mobile breakpoint
+    };
 
     // Initial check
-    handleResize()
+    handleResize();
 
     // Add event listener
-    window.addEventListener('resize', handleResize)
+    window.addEventListener("resize", handleResize);
 
     // Cleanup
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // Function to handle editing
   const handleEditClick = (): void => {
-    setIsEditing(true)
-  }
+    setIsEditing(true);
+  };
 
   // Function to save changes
   const handleSaveClick = (): void => {
-    setIsEditing(false)
-  }
+    setIsEditing(false);
+  };
 
   // Function to handle phone number change
   const handlePhoneNumberChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    setPhoneNumber(e.target.value)
-  }
+    setPhoneNumber(e.target.value);
+  };
 
   // Function to handle operator change
   const handleOperatorChange = (e: ChangeEvent<HTMLSelectElement>): void => {
-    const operatorId = parseInt(e.target.value)
-    const newOperator = operators.find((op) => op.id === operatorId)
+    const operatorId = parseInt(e.target.value);
+    const newOperator = operators.find((op) => op.id === operatorId);
     if (newOperator) {
-      setSelectedOperator(newOperator)
+      setSelectedOperator(newOperator);
     }
-  }
+  };
+
+  const handleFitert = (type: 1 | 2) => setFilterType(type);
+
+  const plansList =
+    plans.plansDetails?.products.filter(
+      ({ pt }: { pt: number }) => pt === filterType
+    ) ?? [];
 
   return (
     <>
       <div
         className="valu__btn"
-        style={{ margin: '10px', padding: '10px', textAlign: 'center' }}
+        style={{ margin: "10px", padding: "10px", textAlign: "center" }}
       >
         <div
           className="top-buttons"
           style={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'center',
-            flexWrap: 'wrap',
-            gap: '10px',
-            marginBottom: '20px',
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "center",
+            flexWrap: "wrap",
+            gap: "10px",
+            marginBottom: "20px",
           }}
         >
-          <Link
+          <button
             style={{
-              flex: '1',
-              minWidth: '120px',
-              maxWidth: '200px',
-              margin: '5px',
+              flex: "1",
+              minWidth: "120px",
+              maxWidth: "200px",
+              margin: "5px",
             }}
-            href="/order"
+            onClick={() => handleFitert(1)}
             className="cmn__btn"
           >
             <span>Top-Up</span>
-          </Link>
-          <Link
+          </button>
+          <button
             style={{
-              flex: '1',
-              minWidth: '120px',
-              maxWidth: '200px',
-              margin: '5px',
+              flex: "1",
+              minWidth: "120px",
+              maxWidth: "200px",
+              margin: "5px",
             }}
-            href="/order"
             className="cmn__btn"
+            onClick={() => handleFitert(2)}
           >
             <span>Recharge</span>
-          </Link>
+          </button>
         </div>
 
         <div className="text-center mt-4">
           {isEditing ? (
             <div
               style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '10px',
-                width: '100%',
-                maxWidth: '300px',
-                margin: '0 auto',
+                display: "flex",
+                flexDirection: "column",
+                gap: "10px",
+                width: "100%",
+                maxWidth: "300px",
+                margin: "0 auto",
               }}
             >
               <div
-                style={{ display: 'flex', alignItems: 'center', gap: '10px' }}
+                style={{ display: "flex", alignItems: "center", gap: "10px" }}
               >
                 <Image
                   style={{
-                    width: isMobile ? '20px' : '30px',
-                    height: isMobile ? '20px' : '30px',
-                    borderRadius: '50%',
-                    objectFit: 'cover',
+                    width: isMobile ? "20px" : "30px",
+                    height: isMobile ? "20px" : "30px",
+                    borderRadius: "50%",
+                    objectFit: "cover",
                     flexShrink: 0,
                   }}
                   src={Mexico}
@@ -178,12 +193,12 @@ const Packages = () => {
                   value={phoneNumber}
                   onChange={handlePhoneNumberChange}
                   style={{
-                    margin: '0',
-                    fontSize: isMobile ? '0.875rem' : '1rem',
-                    padding: isMobile ? '6px' : '8px',
-                    borderRadius: '5px',
-                    border: '1px solid #ccc',
-                    width: '100%',
+                    margin: "0",
+                    fontSize: isMobile ? "0.875rem" : "1rem",
+                    padding: isMobile ? "6px" : "8px",
+                    borderRadius: "5px",
+                    border: "1px solid #ccc",
+                    width: "100%",
                   }}
                 />
               </div>
@@ -192,11 +207,11 @@ const Packages = () => {
                 value={selectedOperator.id}
                 onChange={handleOperatorChange}
                 style={{
-                  padding: isMobile ? '6px' : '8px',
-                  borderRadius: '5px',
-                  border: '1px solid #ccc',
-                  width: '100%',
-                  fontSize: isMobile ? '0.875rem' : '1rem',
+                  padding: isMobile ? "6px" : "8px",
+                  borderRadius: "5px",
+                  border: "1px solid #ccc",
+                  width: "100%",
+                  fontSize: isMobile ? "0.875rem" : "1rem",
                 }}
               >
                 {operators.map((operator) => (
@@ -209,13 +224,13 @@ const Packages = () => {
               <button
                 onClick={handleSaveClick}
                 style={{
-                  padding: isMobile ? '6px 12px' : '8px 15px',
-                  border: 'none',
-                  borderRadius: '5px',
-                  color: 'white',
-                  cursor: 'pointer',
-                  width: '100%',
-                  fontSize: isMobile ? '0.875rem' : '1rem',
+                  padding: isMobile ? "6px 12px" : "8px 15px",
+                  border: "none",
+                  borderRadius: "5px",
+                  color: "white",
+                  cursor: "pointer",
+                  width: "100%",
+                  fontSize: isMobile ? "0.875rem" : "1rem",
                 }}
                 className="cmn__btn"
               >
@@ -225,31 +240,31 @@ const Packages = () => {
           ) : (
             <div
               style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: isMobile ? '8px' : '12px',
-                width: '100%',
-                flexWrap: isMobile ? 'wrap' : 'nowrap',
-                padding: isMobile ? '0 10px' : '0',
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: isMobile ? "8px" : "12px",
+                width: "100%",
+                flexWrap: isMobile ? "wrap" : "nowrap",
+                padding: isMobile ? "0 10px" : "0",
               }}
             >
               <div
                 style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  flex: isMobile ? '1 0 100%' : '0 1 auto',
-                  justifyContent: isMobile ? 'center' : 'flex-start',
-                  marginBottom: isMobile ? '8px' : '0',
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  flex: isMobile ? "1 0 100%" : "0 1 auto",
+                  justifyContent: isMobile ? "center" : "flex-start",
+                  marginBottom: isMobile ? "8px" : "0",
                 }}
               >
                 <Image
                   style={{
-                    width: isMobile ? '24px' : '40px',
-                    height: isMobile ? '24px' : '40px',
-                    borderRadius: '50%',
-                    objectFit: 'cover',
+                    width: isMobile ? "24px" : "40px",
+                    height: isMobile ? "24px" : "40px",
+                    borderRadius: "50%",
+                    objectFit: "cover",
                     flexShrink: 0,
                   }}
                   src={Mexico}
@@ -259,15 +274,15 @@ const Packages = () => {
                 <h4
                   id="numberField"
                   style={{
-                    margin: '0',
-                    fontSize: isMobile ? '1rem' : '1.9rem',
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
+                    margin: "0",
+                    fontSize: isMobile ? "1rem" : "1.9rem",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
                     flexShrink: 0,
-                    maxWidth: isMobile ? '150px' : '250px', // Changed from 35% to 250px
-                    color: '#000', // Added explicit color to ensure visibility
-                    display: 'block', // Added to ensure display
+                    maxWidth: isMobile ? "150px" : "250px", // Changed from 35% to 250px
+                    color: "#000", // Added explicit color to ensure visibility
+                    display: "block", // Added to ensure display
                   }}
                 >
                   {phoneNumber}
@@ -276,10 +291,10 @@ const Packages = () => {
 
               <Image
                 style={{
-                  borderRadius: '5px',
-                  width: isMobile ? '80px' : '150px',
-                  height: 'auto',
-                  objectFit: 'contain',
+                  borderRadius: "5px",
+                  width: isMobile ? "80px" : "150px",
+                  height: "auto",
+                  objectFit: "contain",
                   flexShrink: 0,
                 }}
                 src={selectedOperator.image}
@@ -290,9 +305,9 @@ const Packages = () => {
                 src={EditIcon}
                 onClick={handleEditClick}
                 style={{
-                  width: isMobile ? '20px' : '30px',
-                  height: 'auto',
-                  cursor: 'pointer',
+                  width: isMobile ? "20px" : "30px",
+                  height: "auto",
+                  cursor: "pointer",
                   flexShrink: 0,
                 }}
                 alt="Edit_logo"
@@ -303,109 +318,17 @@ const Packages = () => {
       </div>
 
       <div className="row g-4">
-        {[1, 2, 3, 4, 5, 6].map((index) => (
+        {plansList.map((plansDetail: any, index: Key | null | undefined) => (
           <div key={index} className="col-md-6 col-12">
-            <div
-              className="valu__items"
-              style={{
-                padding: isMobile ? '10px' : '15px',
-                borderRadius: '8px',
-                boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-              }}
-            >
-              <div
-                className="valu__usd"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  marginBottom: '10px',
-                }}
-              >
-                <Image
-                  src={ata5g}
-                  alt="img"
-                  style={{
-                    maxWidth: isMobile ? '40px' : '50px',
-                    height: 'auto',
-                  }}
-                />
-                <span
-                  className="fz-18 fw-500"
-                  style={{
-                    fontSize: isMobile ? '14px' : '16px',
-                    fontWeight: '500',
-                  }}
-                >
-                  {index % 2 === 0
-                    ? `AT&T ${index * 5 + 5} USD PIN`
-                    : `AT&T Prepaid Refill ${index * 5 + 5} USD`}
-                </span>
-              </div>
-              <p
-                style={{
-                  margin: '5px 0',
-                  fontSize: isMobile ? '12px' : '14px',
-                }}
-              >
-                {index % 2 === 0
-                  ? 'Instant delivery to email'
-                  : 'Instant delivery to phone'}
-              </p>
-              <span
-                className="usd fz-16"
-                style={{
-                  margin: '10px 0',
-                  fontWeight: 'bold',
-                  fontSize: isMobile ? '14px' : '16px',
-                }}
-              >
-                USD {(index * 5 + 5).toFixed(2)}
-              </span>
-              <div
-                className="valu__btn"
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  gap: isMobile ? '5px' : '10px',
-                  marginTop: 'auto',
-                  flexWrap: 'wrap',
-                }}
-              >
-                {index % 2 === 0 && (
-                  <div
-                    style={{ flex: '1', minWidth: isMobile ? '80px' : '100px' }}
-                  >
-                    <Select
-                      data={index === 0 ? code : index === 3 ? code2 : code3}
-                    />
-                  </div>
-                )}
-                <Link
-                  href="/order-summary"
-                  className="cmn__btn"
-                  style={{
-                    flex: index % 2 === 0 ? '1' : '100%',
-                    minWidth: isMobile ? '80px' : '100px',
-                    textAlign: 'center',
-                    padding: isMobile ? '6px' : '8px',
-                    display: 'block',
-                    fontSize: isMobile ? '0.875rem' : '1rem',
-                  }}
-                >
-                  <span>Choose</span>
-                </Link>
-              </div>
-            </div>
+            <PlansCard
+              plansDetails={plansDetail}
+              msisdn_info={plans.plansDetails.msisdn_info}
+            />
           </div>
         ))}
       </div>
     </>
-  )
-}
+  );
+};
 
-export default Packages
+export default Packages;
