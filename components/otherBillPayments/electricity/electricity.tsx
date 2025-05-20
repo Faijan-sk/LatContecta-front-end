@@ -3,7 +3,7 @@ import HomeTwoFilterOptions from '@/components/common/HomeTwoFilterOptions'
 import RechargePaymentboxTwo from '@/components/common/RechargePaymentboxTwo'
 import PromoSponsorSliderTwo from '@/components/slider/PromoSponsorSliderTwo'
 import eletronic2 from '/public/img/banner/eletronic2.jpg'
-import AddTwo from '@/public/img/banner/DALL·E 2025-03-11 12.02.26 - A vibrant advertisement for a healthy snacks brand. The image features an assortment of colorful and fresh snacks, such as granola bars, dried fruit, .webp'
+// import AddTwo from '@/public/img/banner/DALL·E 2025-03-11 12.02.26 - A vibrant advertisement for a healthy snacks brand. The image features an assortment of colorful and fresh snacks, such as granola bars, dried fruit, .webp'
 
 const Banner = () => {
   return (
@@ -34,14 +34,14 @@ const Banner = () => {
             </div>
             <div className="col-xxl-3 col-xl-3 col-lg-3 col-md-6">
               <div className="pay__sponsor__thumbtwo">
-                <Image
+                {/* <Image
                   style={{
                     height: '55vh',
                     borderRadius: '5px',
                   }}
                   src={AddTwo}
                   alt="img"
-                />
+                /> */}
               </div>
             </div>
           </div>

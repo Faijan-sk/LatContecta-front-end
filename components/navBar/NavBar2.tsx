@@ -39,7 +39,7 @@ const NavBar = ({
           </div>
           <div className="menu__right__components d-flex align-items-center">
             {/* Mobile Login Button - Visible only on small screens */}
-            <div className="d-flex d-lg-none me-3">
+            {/* <div className="d-flex d-lg-none me-3">
               <Link href="/login" className="cmn__btn no-underline">
                 <span>Login</span>
               </Link>
@@ -48,7 +48,7 @@ const NavBar = ({
               <Link href="/login" className="cmn__btn no-underline">
                 <span>Login</span>
               </Link>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
