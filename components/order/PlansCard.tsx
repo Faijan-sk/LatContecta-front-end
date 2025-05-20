@@ -52,6 +52,23 @@ export interface ProductInterfaceProps {
   products: Product[];
 }
 
+const distributerDetails = {
+  local: {
+    username: "gulam000",
+    password: "B!N@ry1024",
+    user_uid: "44505337",
+    dist_api:
+      "095b105359b0bceec998dd0f002707ae0e64f191f6550ef1f246d33b605039ce",
+  },
+  live: {
+    username: "gulam000",
+    password: "gulam000",
+    user_uid: "22894830",
+    dist_api:
+      "dbf9ad8a65d441ef8212d31d89389548a30182e123e957f90e49a167ecfe2c13",
+  },
+};
+
 const PlansCard = ({
   plansDetails,
   msisdn_info,
@@ -63,6 +80,8 @@ const PlansCard = ({
   const [showModal, setShowModal] = useState<boolean>(false);
   const [tmid, setTmid] = useState<string>("");
   const [localError, setLocalError] = useState<string>("");
+  const [generateBarcodeLoader, setGenerateBarcodeLoader] =
+    useState<boolean>(false);
 
   const { msisdn, product } = msisdn_info as {
     msisdn: string;
@@ -82,13 +101,7 @@ const PlansCard = ({
   async function logingUser() {
     try {
       debugger;
-      const requestBody = {
-        username: "gulam000",
-        password: "B!N@ry1024",
-        user_uid: "44505337",
-        dist_api:
-          "095b105359b0bceec998dd0f002707ae0e64f191f6550ef1f246d33b605039ce",
-      };
+      const requestBody = distributerDetails.live;
       const { data } = await axiosInstance.post("/dislogin", {
         ...requestBody,
       });
@@ -103,6 +116,8 @@ const PlansCard = ({
 
   // ** Generate Barcode
   async function generateBarcode() {
+    let newTab;
+    setGenerateBarcodeLoader(true);
     try {
       if (plansDetails.Skuid == "0") {
         toggle("open");
@@ -114,14 +129,34 @@ const PlansCard = ({
       }
       const access = localStorage.getItem("access");
       if (!access) await logingUser();
+      newTab = window.open("", "_blank");
       const res = await axiosInstance.post("/generate-barcode/", {
         msisdn,
         Skuid: plansDetails.Skuid,
         pdn: plansDetails.pdn,
         tmid: tmid == "mx" ? "sipe_mx" : tmid,
       });
+      const { data } = res;
+
+      if (!newTab) {
+        alert(
+          "El bloqueador de ventanas emergentes impidió abrir una nueva pestaña. Por favor, permite las ventanas emergentes para este sitio."
+        );
+        return;
+      }
+      if (data.payment_response.url) {
+        newTab.location.href = data.payment_response.url;
+      } else {
+        alert("No se pudo generar la URL del código de barras.");
+        newTab.close();
+      }
     } catch (error) {
       console.log(error);
+      alert("¡Algo salió mal!");
+      console.error("Error generating barcode:", error);
+      if (newTab) newTab.close();
+    } finally {
+      setGenerateBarcodeLoader(false);
     }
   }
 
@@ -255,7 +290,7 @@ const PlansCard = ({
               className="btn btn-primary w-50"
               onClick={generateBarcode}
             >
-              Generate Barcode
+              {generateBarcodeLoader ? "Generating..." : "Generate Barcode"}
             </button>
           </div>
         </div>
