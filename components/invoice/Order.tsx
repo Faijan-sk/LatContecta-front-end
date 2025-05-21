@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from 'next/link'
 
 const Order = () => {
   return (
@@ -12,7 +12,7 @@ const Order = () => {
                   <h3>Invoice</h3>
                   <div className="invoice__leftnumber">
                     <span className="bage">Invoice number</span>
-                    <span className="counting">325546744</span>
+                    <span className="counting">32554s6744</span>
                   </div>
                   <div className="invoice__leftnumber">
                     <span className="bage">Order Date</span>
@@ -49,7 +49,7 @@ const Order = () => {
                   <h5 className="summary__title">Order Summary</h5>
                   <div className="order__table__fluid">
                     <div className="order__table__items bg__add">
-                      <span>Recipient No</span>
+                      <span>Recipient Nos</span>
                       <span>Operrator</span>
                       <span>Receive amount</span>
                       <span>Amount</span>
@@ -126,7 +126,7 @@ const Order = () => {
         </div>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default Order;
+export default Order

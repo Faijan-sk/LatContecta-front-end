@@ -1,3 +1,4 @@
+'use client'
 import Link from 'next/link'
 import Select from '../select/Select'
 
@@ -5,7 +6,7 @@ const operator = [
   { id: 1, name: 'Select Your Operator' },
   { id: 2, name: 'Telcel' },
   { id: 3, name: 'AT & T' },
-  { id: 4, name: 'Movistara' },
+  { id: 4, name: 'Movistar' },
 ]
 
 const RechargePaymentbox = ({ title }: { title: string }) => {
@@ -53,7 +54,7 @@ const RechargePaymentbox = ({ title }: { title: string }) => {
           </div>
         </div>
       </form>
-      <Link href="/order" className="cmn__btn no-underline">
+      <Link href="/post-paid-order-summary" className="cmn__btn no-underline">
         <span>Continue recharge</span>
       </Link>
     </div>

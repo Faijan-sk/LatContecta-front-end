@@ -1,3 +1,4 @@
+'use client'
 import Link from 'next/link'
 import PaymetOptions from '../common/PaymetOptions'
 import Pagination from '../pagination/Pagination'
@@ -15,7 +16,7 @@ const OrderMain = () => {
 
               <div>
                 {/* Paymet Options Section  */}
-                <PaymetOptions />
+                {/* <PaymetOptions /> */}
 
                 {/* Order Content Section */}
                 {/* <OrderContent /> */}
@@ -26,7 +27,7 @@ const OrderMain = () => {
                 <Packages />
 
                 {/* Pagination Here */}
-                <Pagination clss="justify-content-center pt__40" />
+                {/* <Pagination clss="justify-content-center pt__40" /> */}
               </div>
 
               <div className="probtn text-center pt__40">

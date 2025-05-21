@@ -1,5 +1,5 @@
 import PaymetOptions from '../common/PaymetOptions'
-import OrderSummeryContent from './OrderSummeryContent'
+import OrderSummeryContent from './PostOrderSummaryContext'
 
 const OrderSummeryMain = () => {
   return (
@@ -10,7 +10,7 @@ const OrderSummeryMain = () => {
             <div className="order__wrappers">
               <div className="order__boxes order__boxestwo">
                 {/* Paymet Options Section */}
-                {/* <PaymetOptions /> */}
+                <PaymetOptions />
 
                 {/* Order Summery Content Here */}
                 <OrderSummeryContent />

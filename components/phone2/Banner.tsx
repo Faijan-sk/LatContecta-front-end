@@ -1,3 +1,4 @@
+'use client'
 import HomeFilterOptions from '../common/HomeFilterOptions'
 import RechargePaymentbox from '../common/RechargePaymentbox'
 import RechargePaymentboxTwo from '../common/RechargePaymentboxTwo'
@@ -7,11 +8,6 @@ import PaymentSponsorSlider from '../slider/PaymentSponsorSlider'
 import electricity from '/public/img/banner/electricity.jpg'
 import PhonePage from '@/components/phones/phoneGridMain'
 import Footer from '../footer/Footer'
-const sliderData = [
-  { id: 1, img: electricity },
-  { id: 2, img: electricity },
-  { id: 3, img: electricity },
-]
 
 const Banner = () => {
   return (

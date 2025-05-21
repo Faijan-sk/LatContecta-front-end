@@ -1,18 +1,60 @@
 'use client'
 
 import Image from 'next/image'
-import { useState } from 'react'
+import { useState, useEffect, Dispatch, SetStateAction } from 'react'
 import RangeSlider from 'react-range-slider-input'
+import 'react-range-slider-input/dist/style.css'
 import dropdown from '/public/img/svg/dropdown.svg'
 
-const FilterOption = ({ id = '' }) => {
-  const [value, setValue] = useState([200, 700])
+interface Filters {
+  priceRange: number[]
+  priceCategories: string[]
+  customerRatings: string[]
+  internalStorage: string[]
+}
+
+interface FilterOptionProps {
+  id?: string
+  onFilterChange: Dispatch<SetStateAction<Filters>>
+}
+
+const FilterOption = ({ id = '', onFilterChange }: FilterOptionProps) => {
+  const [priceRange, setPriceRange] = useState<[number, number]>([200, 700])
+  const [priceCategories, setPriceCategories] = useState<string[]>([])
+  const [customerRatings, setCustomerRatings] = useState<string[]>([])
+  const [internalStorage, setInternalStorage] = useState<string[]>([])
+
+  const handleCheckboxChange = (
+    value: string,
+    checked: boolean,
+    setter: Dispatch<SetStateAction<string[]>>
+  ) => {
+    setter((prev) =>
+      checked ? [...prev, value] : prev.filter((item) => item !== value)
+    )
+  }
+
+  useEffect(() => {
+    onFilterChange({
+      priceRange,
+      priceCategories,
+      customerRatings,
+      internalStorage,
+    })
+  }, [
+    priceRange,
+    priceCategories,
+    customerRatings,
+    internalStorage,
+    onFilterChange,
+  ])
 
   return (
     <div className="common__filter__wrapper">
       <h3 className="filltertext borderb text-start pb__20 mb__20">Filter</h3>
 
-      <div className="search__item borderb pb__10 mb__20">
+      {/* PRICE CATEGORIES */}
+      {/* <div className="search__item borderb pb__10 mb__20">
         <div className="common__sidebar__head">
           <button
             className="w-100 fw-400 lato dtext fz-24 d-flex align-items-center justify-content-between"
@@ -27,36 +69,36 @@ const FilterOption = ({ id = '' }) => {
           </button>
         </div>
         <div className="common__sidebar__content show" id="departureTime">
-          <div className="common__typeproperty my-3">
+          <div className="common__typeproperty my-3 text-start">
             {[
-              ['$ 30000 and below'],
-              ['$ 30000 - $ 50000'],
-              ['$ 50000 - $ 75000'],
-              ['$ 75000 - $ 100000'],
-              ['$ 100000 and Above'],
-            ].map(([period, time], i) => (
-              <div
-                key={i}
-                className="type__radio mb__10 d-flex align-items-center justify-content-between"
-              >
-                <div className="radio__left d-flex align-items-center gap-2">
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    id={`proper1s13${id}${i}`}
-                  />
-                  <label
-                    className="form-check-label"
-                    htmlFor={`proper1s13${id}${i}`}
-                  >
-                    <span className="fz-16 lato fw-400 dtext">{period}</span>
-                  </label>
-                </div>
+              '$ 300 and below',
+              '$ 300 - $ 500',
+              '$ 500 - $ 750',
+              '$ 750 - $ 1000',
+              '$ 1000 and Above',
+            ].map((label, i) => (
+              <div key={i} className="type__radio mb__10">
+                <input
+                  type="checkbox"
+                  id={`priceCat${id}${i}`}
+                  onChange={(e) =>
+                    handleCheckboxChange(
+                      label,
+                      e.target.checked,
+                      setPriceCategories
+                    )
+                  }
+                />
+                <label htmlFor={`priceCat${id}${i}`}>
+                  <span className="fz-16 lato fw-400 dtext">{label}</span>
+                </label>
               </div>
             ))}
           </div>
         </div>
-      </div>
+      </div> */}
+
+      {/* PRICE RANGE SLIDER */}
       <div className="search__item borderb pb__10 mb__20">
         <div className="common__sidebar__head">
           <button
@@ -75,11 +117,10 @@ const FilterOption = ({ id = '' }) => {
           <div className="range__barcustom my-3">
             <div id="slider-range" className="range-bar">
               <RangeSlider
-                value={value}
-                onInput={setValue}
+                value={priceRange}
+                onInput={setPriceRange}
                 min={0}
                 max={1000}
-                ariaValuemax
               />
             </div>
 
@@ -89,7 +130,7 @@ const FilterOption = ({ id = '' }) => {
                 <input
                   type="number"
                   className="input-min"
-                  value={value[0]}
+                  value={priceRange[0]}
                   readOnly
                 />
               </div>
@@ -99,7 +140,7 @@ const FilterOption = ({ id = '' }) => {
                 <input
                   type="number"
                   className="input-max"
-                  value={value[1]}
+                  value={priceRange[1]}
                   readOnly
                 />
               </div>
@@ -107,81 +148,79 @@ const FilterOption = ({ id = '' }) => {
           </div>
         </div>
       </div>
+
+      {/* CUSTOMER RATINGS */}
       <div className="search__item">
         <div className="common__sidebar__head">
           <button
             className="w-100 fw-400 lato dtext fz-24 d-flex align-items-center justify-content-between"
             type="button"
             data-bs-toggle="collapse"
-            data-bs-target="#busTravels"
+            data-bs-target="#customerRatings"
             aria-expanded="false"
-            aria-controls="busTravels"
+            aria-controls="customerRatings"
           >
             Customer Rating
             <Image src={dropdown} alt="svg" />
           </button>
         </div>
-        <div className="common__sidebar__content show" id="busTravels">
+        <div className="common__sidebar__content show" id="customerRatings">
           <div className="common__typeproperty mt-3 pb-3">
-            {['5 above', '4 above', '3 above', '2 above ', '1 above '].map(
-              (itm, i) => (
-                <div
-                  key={i}
-                  className="type__radio mb__10 d-flex align-items-center justify-content-between"
-                >
-                  <div className="radio__left d-flex align-items-center gap-2">
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      id={`proper1s${id}${i}`}
-                    />
-                    <label
-                      className="form-check-label"
-                      htmlFor={`proper1s${id}${i}`}
-                    >
-                      <span className="fz-16 lato fw-400 dtext">{itm}</span>
-                    </label>
-                  </div>
-                </div>
-              )
-            )}
+            {['4 above', '3 above', '2 above', '1 above'].map((label, i) => (
+              <div key={i} className="type__radio mb__10">
+                <input
+                  type="checkbox"
+                  id={`rating${id}${i}`}
+                  onChange={(e) =>
+                    handleCheckboxChange(
+                      label,
+                      e.target.checked,
+                      setCustomerRatings
+                    )
+                  }
+                />
+                <label htmlFor={`rating${id}${i}`}>
+                  <span className="fz-16 lato fw-400 dtext">{label}</span>
+                </label>
+              </div>
+            ))}
           </div>
         </div>
       </div>
+
+      {/* INTERNAL STORAGE */}
       <div className="search__item">
         <div className="common__sidebar__head">
           <button
             className="w-100 fw-400 lato dtext fz-24 d-flex align-items-center justify-content-between"
             type="button"
             data-bs-toggle="collapse"
-            data-bs-target="#busTravels"
+            data-bs-target="#internalStorage"
             aria-expanded="false"
-            aria-controls="busTravels"
+            aria-controls="internalStorage"
           >
             Internal Storage
             <Image src={dropdown} alt="svg" />
           </button>
         </div>
-        <div className="common__sidebar__content show" id="busTravels">
+        <div className="common__sidebar__content show" id="internalStorage">
           <div className="common__typeproperty mt-3 pb-3">
-            {['128 -256 GB', '256 GB and above'].map((itm, i) => (
-              <div
-                key={i}
-                className="type__radio mb__10 d-flex align-items-center justify-content-between"
-              >
-                <div className="radio__left d-flex align-items-center gap-2">
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    id={`proper1s${id}${i}`}
-                  />
-                  <label
-                    className="form-check-label"
-                    htmlFor={`proper1s${id}${i}`}
-                  >
-                    <span className="fz-16 lato fw-400 dtext">{itm}</span>
-                  </label>
-                </div>
+            {['128 -256 GB', '256 GB and above'].map((label, i) => (
+              <div key={i} className="type__radio mb__10">
+                <input
+                  type="checkbox"
+                  id={`storage${id}${i}`}
+                  onChange={(e) =>
+                    handleCheckboxChange(
+                      label,
+                      e.target.checked,
+                      setInternalStorage
+                    )
+                  }
+                />
+                <label htmlFor={`storage${id}${i}`}>
+                  <span className="fz-16 lato fw-400 dtext">{label}</span>
+                </label>
               </div>
             ))}
           </div>

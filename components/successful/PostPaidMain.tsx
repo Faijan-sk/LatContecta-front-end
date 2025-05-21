@@ -1,5 +1,5 @@
 import PaymetOptions from '../common/PaymetOptions'
-import SuccessfulContent from './SuccessfulContent'
+import SuccessfulContent from './PostPaidSuccess'
 
 const SuccessfulMain = () => {
   return (
@@ -9,7 +9,7 @@ const SuccessfulMain = () => {
           <div className="col-xxl-8 col-xl-10 col-lg-12">
             <div className="payment__success__inner">
               {/* Paymet Options Here */}
-              {/* <PaymetOptions /> */}
+              <PaymetOptions />
 
               {/* Successful Content Section */}
               <SuccessfulContent />

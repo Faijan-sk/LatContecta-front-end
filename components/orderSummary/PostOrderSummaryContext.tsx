@@ -1,43 +1,25 @@
 'use client'
-import { RootState } from '@/redux/store'
 import Link from 'next/link'
-import { useSelector } from 'react-redux'
-
-import Telcel from '@/public/img/operators/finaltelcel.jpg'
-import Att from '@/public/img/operators/finalAtt.jpg'
-import ThirdLogo from '@/public/img/operators/finalthird.jpg'
-
-const opratorImage = {
-  TFEMXN_Q: Telcel,
-  MVNO: Att,
-  TFESV: ThirdLogo,
-}
 
 const OrderSummeryContent = () => {
-  const { selectedPlan, plansDetails } = useSelector(
-    (state: RootState) => state.plans
-  )
-
-  const { Skuid, amt, pdn } = selectedPlan
-  const { product } = plansDetails.msisdn_info
-
   return (
     <>
+      its Postpaid
       <div className="order__summary__wrapper mb__30">
         <div className="over__responsive">
           <h5 className="summary__title">Order Summary</h5>
           <div className="order__table__fluid">
             <div className="order__table__items bg__add">
-              <span>Skuid</span>
+              <span>Recipient Noss</span>
               <span>Operrator</span>
-              <span>PDN</span>
+              <span>Receive amount</span>
               <span>Amount</span>
             </div>
             <div className="order__table__items">
-              <span>{Skuid}</span>
-              <span>{product}</span>
-              <span>{pdn}</span>
-              <span>{amt}</span>
+              <span>(406) 555-0120</span>
+              <span>AT & T</span>
+              <span>$4531.00</span>
+              <span>$4531.00</span>
             </div>
           </div>
           <div className="order__table__box">
@@ -75,7 +57,7 @@ const OrderSummeryContent = () => {
         </Link> */}
       </div>
       <div className="probtn text-center pt__40">
-        <Link href="/successful" className="cmn__btn">
+        <Link href="/successful/post-paid" className="cmn__btn">
           <span>Make Payment</span>
         </Link>
       </div>

@@ -46,7 +46,6 @@ const SendTopUp: React.FC = () => {
   const [msisdn, setMsisdn] = useState<string>('')
   const [cuy, setCuy] = useState<string>('MX') // Set Mexico as default country
   const [opr, setOpr] = useState<string | null>(null)
-  const [serverErrors, setSetServerErrors] = useState<string | null>(null)
   const [fetchPlanLoader, setFetchPlanLoader] = useState<string>('Send Top-up')
 
   const [errors, setErrors] = useState({
@@ -84,45 +83,64 @@ const SendTopUp: React.FC = () => {
   const handleSend = async () => {
     const countryCode = getCountryCode(msisdn, cuy as CountryCode)
 
-    if (!countryCode) {
+    // Reset all errors first
+    setErrors({
+      msisdn: '',
+      opr: '',
+      cuy: '',
+    })
+
+    // Validate phone number
+    if (!msisdn) {
       setErrors((prev) => ({
         ...prev,
-        msisdn: 'Número de teléfono no válido',
+        msisdn: 'Phone number is required',
       }))
       return
     }
 
+    if (!countryCode) {
+      setErrors((prev) => ({
+        ...prev,
+        msisdn: 'Invalid phone number',
+      }))
+      return
+    }
+
+    // Validate country selection
+    if (!cuy) {
+      setErrors((prev) => ({
+        ...prev,
+        cuy: 'Please select a country',
+      }))
+      return
+    }
+
+    // Validate operator selection
+    if (!opr) {
+      setErrors((prev) => ({
+        ...prev,
+        opr: 'Please select an operator',
+      }))
+      return
+    }
+
+    // Form data is valid, proceed with API call
     const body = {
       msisdn: msisdn.replace(new RegExp(`^${countryCode}`), ''), // Remove country code
       cuy,
       opr,
     }
 
-    let hasError = false
-
-    // ** Validate Input Fields
-    Object.keys(body).forEach((key) => {
-      const typedKey = key as keyof typeof body
-      if (!body[typedKey]) {
-        hasError = true
-        setErrors((prev) => ({
-          ...prev,
-          [typedKey]: 'Este campo es obligatorio',
-        }))
-      }
-    })
-
-    if (hasError) return
     setFetchPlanLoader('Searching Plans...')
     try {
-      setSetServerErrors('')
       const params = `/get_prod/`
       const res = await axiosInstance.post(params, body)
 
       const { data } = res
       const { msisdn_info, products } = data
 
-      setFetchPlanLoader('Obteniendo planes...')
+      setFetchPlanLoader('Fetching plans...')
 
       setTimeout(() => {
         dispatch(
@@ -140,10 +158,14 @@ const SendTopUp: React.FC = () => {
       const axiosError = error as AxiosError<CustomErrorResponse>
       console.error('Error fetching product:', error)
       if (axiosError?.response?.status === 400) {
-        setSetServerErrors('Teléfono Inválido')
+        // Set the server error directly in the msisdn error field
+        setErrors((prev) => ({
+          ...prev,
+          msisdn: 'Invalid Number',
+        }))
       }
     } finally {
-      setFetchPlanLoader('Planes de recarga')
+      setFetchPlanLoader('Send Top-up')
     }
   }
   return (
@@ -176,6 +198,11 @@ const SendTopUp: React.FC = () => {
               ))}
             </select>
           </div>
+          {errors.cuy && (
+            <div className="text-danger mt-1" style={{ fontSize: '18px' }}>
+              {errors.cuy}
+            </div>
+          )}
 
           <div
             className="border rounded-3 bg-light text-center p-4 mt-3 mx-auto"
@@ -193,7 +220,7 @@ const SendTopUp: React.FC = () => {
                 backgroundColor: 'rgba(240, 242, 255, 1)',
                 borderRadius: '15px',
                 padding: '8px',
-                border: '1px solid #ccc',
+                border: errors.msisdn ? '1px solid #dc3545' : '1px solid #ccc',
                 position: 'relative',
                 outline: 'none',
                 boxShadow: 'none',
@@ -228,6 +255,14 @@ const SendTopUp: React.FC = () => {
                 placeholder="Enter phone number here"
               />
             </div>
+            {errors.msisdn && (
+              <div
+                className="text-danger mt-1"
+                style={{ fontSize: '18px', fontWeight: 'bold' }}
+              >
+                {errors.msisdn}
+              </div>
+            )}
 
             <div
               className="operator__texts d-flex flex-column align-items-center text-center mt-3"
@@ -257,6 +292,14 @@ const SendTopUp: React.FC = () => {
                   />
                 ))}
               </div>
+              {errors.opr && (
+                <div
+                  className="text-danger mt-1"
+                  style={{ fontSize: '18px', fontWeight: 'bold' }}
+                >
+                  {errors.opr}
+                </div>
+              )}
             </div>
 
             <div className="mt-3 sigin__grp d-flex justify-content-center">
