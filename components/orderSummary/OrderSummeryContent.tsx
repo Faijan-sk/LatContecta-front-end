@@ -19,25 +19,25 @@ const OrderSummeryContent = () => {
   )
 
   const { Skuid, amt, pdn } = selectedPlan
-  const { product } = plansDetails.msisdn_info
+  const { product, msisdn } = plansDetails.msisdn_info
 
   return (
     <>
       <div className="order__summary__wrapper mb__30">
         <div className="over__responsive">
           <h5 className="summary__title">Order Summary</h5>
-          <div className="order__table__fluid">
-            <div className="order__table__items bg__add">
+          <div className="order__table__fluid text-start">
+            <div className="text-start order__table__items bg__add ">
               <span>Skuid</span>
               <span>Operrator</span>
               <span>PDN</span>
-              <span>Amount</span>
+              <span>Mobile Number</span>
             </div>
             <div className="order__table__items">
               <span>{Skuid}</span>
               <span>{product}</span>
               <span>{pdn}</span>
-              <span>{amt}</span>
+              <span>{msisdn}</span>
             </div>
           </div>
           <div className="order__table__box">
@@ -45,7 +45,7 @@ const OrderSummeryContent = () => {
               <ul>
                 <li>
                   <span>Sub Total:</span>
-                  <span className="bg">$4531.00</span>
+                  <span className="bg">{amt}</span>
                 </li>
                 <li>
                   <span>Promotional Code:</span>
@@ -53,7 +53,7 @@ const OrderSummeryContent = () => {
                 </li>
                 <li>
                   <span>Total:</span>
-                  <span className="bg">$4531.00</span>
+                  <span className="bg">{amt}</span>
                 </li>
               </ul>
             </div>
