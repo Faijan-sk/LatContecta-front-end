@@ -60,6 +60,12 @@ const distributerDetails = {
   },
 }
 
+const storeOptions = [
+  { src: oxxo, alt: 'oxxo_logo', value: 'oxxo_mx', name: 'OXXO' },
+  { src: seven, alt: 'seven_logo', value: 'sipe_mx', name: '7-Eleven' },
+  { src: Soriana, alt: 'soriana_logo', value: 'mx', name: 'Soriana' },
+]
+
 const PlansCard = ({
   plansDetails,
   msisdn_info,
@@ -75,6 +81,7 @@ const PlansCard = ({
   const [generateBarcodeLoader, setGenerateBarcodeLoader] =
     useState<boolean>(false)
   const [paymentType, setPaymentType] = useState<string>('')
+  const [currentStep, setCurrentStep] = useState<'store' | 'amount'>('store')
 
   // ** Redux Hook
   const dispatch = useDispatch()
@@ -98,6 +105,37 @@ const PlansCard = ({
   // Add a function to close the payment modal
   const closePaymentModal = () => {
     setShowPaymentModal(false)
+    setCurrentStep('store')
+    setTmid('')
+    setAmount(0)
+    setLocalError('')
+    setPaymentType('')
+  }
+
+  const openPaymentModal = (pType: 'barcod' | 'card') => {
+    setPaymentType(pType)
+    setShowPaymentModal(true)
+    setCurrentStep('store')
+    setLocalError('')
+  }
+
+  const handleStoreSelection = (storeValue: string) => {
+    setTmid(storeValue)
+    setLocalError('')
+  }
+
+  const proceedToAmount = () => {
+    if (!tmid) {
+      setLocalError('Please select a store')
+      return
+    }
+    setCurrentStep('amount')
+    setLocalError('')
+  }
+
+  const goBackToStore = () => {
+    setCurrentStep('store')
+    setLocalError('')
   }
 
   async function logingUser() {
@@ -115,9 +153,6 @@ const PlansCard = ({
   }
 
   async function generateBarcode(pType: 'barcod' | 'card') {
-    if (paymentType) {
-      setPaymentType('')
-    }
     let newTab
     setGenerateBarcodeLoader(true)
 
@@ -128,9 +163,8 @@ const PlansCard = ({
         return
       }
 
-      if (plansDetails.Skuid === '0' && amount <= 0 && !paymentType) {
-        setShowPaymentModal(true)
-        setPaymentType(pType)
+      if (plansDetails.Skuid === '0' && amount <= 0) {
+        setLocalError('Please enter amount')
         return
       }
 
@@ -139,6 +173,7 @@ const PlansCard = ({
       if (!access) {
         await logingUser()
       }
+
       if (pType == 'card') {
         dispatch(
           handleSelectPlan({
@@ -147,8 +182,10 @@ const PlansCard = ({
           })
         )
         router.push('/order-summary')
+        setShowPaymentModal(false)
         return
       }
+
       // Open new tab for barcode
       newTab = window.open('', '_blank')
       if (!newTab) {
@@ -171,14 +208,10 @@ const PlansCard = ({
 
       if (url) {
         newTab.location.href = url
+        setShowPaymentModal(false)
       } else {
         alert('No se pudo generar la URL del código de barras.')
         newTab.close()
-      }
-
-      if (amount && showPaymentModal) {
-        setAmount(0)
-        setShowPaymentModal(false)
       }
     } catch (error) {
       console.error('Error generating barcode:', error)
@@ -186,13 +219,6 @@ const PlansCard = ({
       if (newTab) newTab.close()
     } finally {
       setGenerateBarcodeLoader(false)
-    }
-  }
-
-  function handleMakePaymentClick() {
-    if (!tmid) {
-      setLocalError('Please select store')
-      return
     }
   }
 
@@ -212,6 +238,17 @@ const PlansCard = ({
     // Allow empty string (to clear the input) or valid numbers including decimals
     if (value === '' || !isNaN(parseFloat(value))) {
       setAmount(value === '' ? 0 : parseFloat(value))
+    }
+  }
+
+  const handleConfirmPayment = () => {
+    if (plansDetails.Skuid === '0' && amount <= 0) {
+      setLocalError('Please enter a valid amount')
+      return
+    }
+
+    if (paymentType === 'barcod' || paymentType === 'card') {
+      generateBarcode(paymentType)
     }
   }
 
@@ -267,33 +304,7 @@ const PlansCard = ({
         >
           USD {plansDetails.amt}
         </span>
-        <label className="mt-2">
-          Choose Store <span className="text-danger">*</span>
-        </label>
-        <div className="d-flex  gap-3 my-2">
-          {[
-            { src: oxxo, alt: 'telcel_logo', value: 'oxxo_mx' },
-            { src: seven, alt: 'att_logo', value: 'sipe_mx' },
-            { src: Soriana, alt: 'moviestar', value: 'mx' },
-          ].map((operator, index) => (
-            <Image
-              key={index}
-              style={{
-                borderRadius: '10px',
-                padding: '5px',
-                width: '15%',
-                height: 'auto',
-                boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)',
-                border: tmid === operator.value ? '3px solid black' : 'none',
-                cursor: 'pointer',
-              }}
-              src={operator.src}
-              alt={operator.alt}
-              onClick={() => setTmid(operator.value)}
-            />
-          ))}
-        </div>
-        {localError ? <p className="text-danger">{localError}</p> : null}
+
         <div
           className="valu__btn"
           style={{
@@ -309,14 +320,15 @@ const PlansCard = ({
             <button
               type="button"
               className="btn btn-primary w-50"
-              onClick={() => generateBarcode('card')}
+              onClick={() => openPaymentModal('card')}
             >
               Make Payment
             </button>
             <button
               type="button"
               className="btn btn-primary w-50"
-              onClick={() => generateBarcode('barcod')}
+              onClick={() => openPaymentModal('barcod')}
+              disabled={generateBarcodeLoader}
             >
               {generateBarcodeLoader ? 'Generating...' : 'Generate Barcode'}
             </button>
@@ -324,7 +336,7 @@ const PlansCard = ({
         </div>
       </div>
 
-      {/* Payment Modal */}
+      {/* Payment Modal with Store Selection and Amount */}
       <div
         className={`modal fade ${showPaymentModal ? 'show d-block' : ''}`}
         tabIndex={-1}
@@ -334,7 +346,9 @@ const PlansCard = ({
         <div className="modal-dialog modal-dialog-centered" role="document">
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title">Enter Amount</h5>
+              <h5 className="modal-title">
+                {currentStep === 'store' ? 'Choose Store' : 'Enter Amount'}
+              </h5>
               <button
                 type="button"
                 className="btn-close"
@@ -342,54 +356,128 @@ const PlansCard = ({
               ></button>
             </div>
             <div className="modal-body">
-              {/* Amount Input */}
-              <div className="form-group mb-3">
-                <label className="form-label fw-medium mb-2">Amount</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  className="form-control bg-light border-0 py-3"
-                  placeholder="Enter Amount"
-                  value={amount === 0 ? '' : amount}
-                  onChange={handleAmountChange}
-                  style={{
-                    borderRadius: '8px',
-                    fontSize: '16px',
-                    color: '#6c757d',
-                    boxShadow: 'none',
-                    transition: 'all 0.3s ease',
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.boxShadow =
-                      '0 0 0 4px rgba(67, 115, 222, 0.2)'
-                    e.target.style.border = '1px solid #4373de'
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.boxShadow = 'none'
-                    e.target.style.border = '0'
-                  }}
-                />
-              </div>
+              {currentStep === 'store' ? (
+                // Store Selection Step
+                <div>
+                  <p className="mb-3">Please select a store to proceed:</p>
+                  <div className="row g-3">
+                    {storeOptions.map((store, index) => (
+                      <div key={index} className="col-4">
+                        <div
+                          className={`text-center p-3 border rounded cursor-pointer ${
+                            tmid === store.value
+                              ? 'border-primary bg-light'
+                              : 'border-light'
+                          }`}
+                          style={{
+                            cursor: 'pointer',
+                            transition: 'all 0.3s ease',
+                          }}
+                          onClick={() => handleStoreSelection(store.value)}
+                        >
+                          <Image
+                            src={store.src}
+                            alt={store.alt}
+                            width={60}
+                            height={60}
+                            style={{
+                              borderRadius: '8px',
+                              objectFit: 'contain',
+                              marginBottom: '8px',
+                            }}
+                          />
+                          <div className="small fw-medium">{store.name}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  {localError && (
+                    <p className="text-danger mt-2 mb-0">{localError}</p>
+                  )}
+                </div>
+              ) : (
+                // Amount Input Step
+                <div>
+                  <div className="mb-3">
+                    <strong>Selected Store:</strong>{' '}
+                    {storeOptions.find((store) => store.value === tmid)?.name}
+                  </div>
+
+                  {plansDetails.Skuid === '0' && (
+                    <div className="form-group mb-3">
+                      <label className="form-label fw-medium mb-2">
+                        Amount (USD)
+                      </label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        className="form-control bg-light border-0 py-3"
+                        placeholder="Enter Amount"
+                        value={amount === 0 ? '' : amount}
+                        onChange={handleAmountChange}
+                        style={{
+                          borderRadius: '8px',
+                          fontSize: '16px',
+                          color: '#6c757d',
+                          boxShadow: 'none',
+                          transition: 'all 0.3s ease',
+                        }}
+                        onFocus={(e) => {
+                          e.target.style.boxShadow =
+                            '0 0 0 4px rgba(67, 115, 222, 0.2)'
+                          e.target.style.border = '1px solid #4373de'
+                        }}
+                        onBlur={(e) => {
+                          e.target.style.boxShadow = 'none'
+                          e.target.style.border = '0'
+                        }}
+                      />
+                    </div>
+                  )}
+
+                  <div className="alert alert-info">
+                    <strong>Plan:</strong> {plansDetails.pdn}
+                    <br />
+                    <strong>Amount:</strong> USD{' '}
+                    {plansDetails.Skuid === '0'
+                      ? amount || 0
+                      : plansDetails.amt}
+                  </div>
+
+                  {localError && <p className="text-danger">{localError}</p>}
+                </div>
+              )}
             </div>
             <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={() => {
-                  {
-                    {
-                      debugger
-                    }
-                  }
-                  if (paymentType === 'barcod' || paymentType === 'card') {
-                    generateBarcode(paymentType)
-                  } else {
-                    console.log('NA')
-                  }
-                }}
-              >
-                Confirm Payment
-              </button>
+              {currentStep === 'store' ? (
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={proceedToAmount}
+                >
+                  Next
+                </button>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    className="btn btn-outline-secondary"
+                    onClick={goBackToStore}
+                  >
+                    Back
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={handleConfirmPayment}
+                    disabled={generateBarcodeLoader}
+                  >
+                    {generateBarcodeLoader
+                      ? 'Processing...'
+                      : 'Confirm Payment'}
+                  </button>
+                </>
+              )}
               <button
                 type="button"
                 className="btn btn-secondary"
