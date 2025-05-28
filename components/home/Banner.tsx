@@ -26,7 +26,16 @@ const Banner = () => {
         <div className="fasilities__body wow fadeInUp" data-wow-duration="3s">
           <div className="row g-4 justify-content-center">
             <div className="col-xxl-8 col-xl-8 col-lg-8 col-md-6">
-              <div className="recharge__paymentbox">
+              <div
+                // className="recharge__paymentbox"
+                style={{
+                  backgroundColor: 'white',
+                  padding: '10px',
+                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+                  height: '500px',
+                  borderRadius: '5px',
+                }}
+              >
                 {/* Recharge Payment box */}
                 {/* <RechargePaymentboxTwo title="Mobile Recharge or Bill Payment" /> */}
                 <SendTopUp />
