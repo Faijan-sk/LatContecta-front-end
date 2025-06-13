@@ -19,7 +19,7 @@ const Banner = () => {
           className="fasilities__wrapper pb__40 wow fadeInUp"
           data-wow-duration="2s"
         >
-          {/* Home Filter Options */}
+          
           <HomeFilterOptions />
         </div>
 
@@ -36,14 +36,11 @@ const Banner = () => {
                   borderRadius: '5px',
                 }}
               >
-                {/* Recharge Payment box */}
-                {/* <RechargePaymentboxTwo title="Mobile Recharge or Bill Payment" /> */}
+             
                 <SendTopUp />
               </div>
             </div>
-            {/* <div className="col-xxl-4 col-xl-4 col-lg-4 col-md-6">
-              <PaymentSponsorSlider sliderData={sliderData} />
-            </div> */}
+           
           </div>
         </div>
       </div>

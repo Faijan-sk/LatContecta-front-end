@@ -15,7 +15,6 @@ import { RootState } from '@/redux/rootReducer'
 
 import PlansCard from './PlansCard'
 
-
 // Define operator type
 interface Operator {
   id: number
@@ -92,6 +91,8 @@ const Packages = () => {
           >
             <span>Top-Up</span>
           </button>
+
+
           <button
             style={{
               flex: '1',
@@ -118,6 +119,9 @@ const Packages = () => {
           </div>
         ))}
       </div>
+
+
+
     </>
   )
 }

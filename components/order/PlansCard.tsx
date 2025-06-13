@@ -2,23 +2,23 @@
 import React, { Fragment, useEffect, useState } from 'react'
 import Image, { StaticImageData } from 'next/image'
 import axiosInstance from '@/lib/axiosInstance'
-
 import Telcel from '@/public/img/operators/finaltelcel.jpg'
 import Att from '@/public/img/operators/finalAtt.jpg'
 import ThirdLogo from '@/public/img/operators/finalthird.jpg'
+
+import AltanLogo from '@/public/img/operators/Altan.jpg'
+import axios, { AxiosError } from 'axios'
 import oxxo from '@/public/img/operators/oxxo.jpeg'
 import seven from '@/public/img/operators/seven-11.jpeg'
 import Soriana from '@/public/img/operators/Soriana.webp'
-
 import { handleSelectPlan } from '@/redux/plans'
-
 import { useRouter } from 'next/navigation'
 import { useDispatch } from 'react-redux'
-type ProductKey = 'TFEMXN_Q' | 'MVNO' | 'TFESV'
+type ProductKey = 'TFEMXN_Q' | 'MBB' | 'TFESV'
 
 const prImage: Record<ProductKey, StaticImageData> = {
-  TFEMXN_Q: Telcel,
-  MVNO: Att,
+  TFEMXN_Q: ThirdLogo,
+  MBB: AltanLogo,
   TFESV: ThirdLogo,
 }
 
@@ -58,6 +58,14 @@ const distributerDetails = {
     dist_api:
       'dbf9ad8a65d441ef8212d31d89389548a30182e123e957f90e49a167ecfe2c13',
   },
+  liveTwo: {
+    username: 'sagar',
+    password: 'B!N@ry10240569',
+
+    user_uid: '27441322',
+    dist_api:
+      '50bf27e4a9cf6cab27e5d7015ce8b35646cb1ea888324270fb1b48d1a9d4fc40',
+  },
 }
 
 const storeOptions = [
@@ -83,12 +91,15 @@ const PlansCard = ({
   const [paymentType, setPaymentType] = useState<string>('')
   const [currentStep, setCurrentStep] = useState<'store' | 'amount'>('store')
 
+  // PDN Modal states (copied from first code)
+  const [showPDNModal, setShowPDNModal] = useState(false)
+  const [fullPDNText, setFullPDNText] = useState<string | null>(null)
+
   // ** Redux Hook
   const dispatch = useDispatch()
   const router = useRouter()
-
+  const [errorResponse, setErrorResponse] = useState('')
   const [amount, setAmount] = useState<number>(0)
-
   const { msisdn, product } = msisdn_info as {
     msisdn: string
     product: ProductKey
@@ -105,17 +116,27 @@ const PlansCard = ({
   // Add a function to close the payment modal
   const closePaymentModal = () => {
     setShowPaymentModal(false)
+    setErrorResponse('')
+
     setCurrentStep('store')
+
     setTmid('')
+
     setAmount(0)
+
     setLocalError('')
+
     setPaymentType('')
   }
 
   const openPaymentModal = (pType: 'barcod' | 'card') => {
     setPaymentType(pType)
+
     setShowPaymentModal(true)
+    setErrorResponse('')
+
     setCurrentStep('store')
+
     setLocalError('')
   }
 
@@ -137,43 +158,36 @@ const PlansCard = ({
     setCurrentStep('store')
     setLocalError('')
   }
-
   async function logingUser() {
     try {
-      const requestBody = distributerDetails.live
+      const requestBody = distributerDetails.liveTwo
       const { data } = await axiosInstance.post('/dislogin', {
         ...requestBody,
       })
-
       const { access } = data as { access: string }
       localStorage.setItem('access', access)
     } catch (error) {
       throw error
     }
   }
-
   async function generateBarcode(pType: 'barcod' | 'card') {
     let newTab
     setGenerateBarcodeLoader(true)
-
     try {
       // Validate Store selection
       if (!tmid) {
         setLocalError('Please select store')
         return
       }
-
       if (plansDetails.Skuid === '0' && amount <= 0) {
         setLocalError('Please enter amount')
         return
       }
-
       // Ensure user is logged in
       const access = localStorage.getItem('access')
       if (!access) {
         await logingUser()
       }
-
       if (pType == 'card') {
         dispatch(
           handleSelectPlan({
@@ -183,9 +197,9 @@ const PlansCard = ({
         )
         router.push('/order-summary')
         setShowPaymentModal(false)
+        setErrorResponse('')
         return
       }
-
       // Open new tab for barcode
       newTab = window.open('', '_blank')
       if (!newTab) {
@@ -194,7 +208,6 @@ const PlansCard = ({
         )
         return
       }
-
       // Make API call to generate barcode
       const res = await axiosInstance.post('/generate-barcode/', {
         msisdn,
@@ -203,35 +216,41 @@ const PlansCard = ({
         tmid: tmid === 'mx' ? 'sipe_mx' : tmid,
         ...(plansDetails?.Skuid == '0' ? { amount } : {}),
       })
-
       const url = res?.data?.payment_response?.url
-
       if (url) {
         newTab.location.href = url
         setShowPaymentModal(false)
+        setErrorResponse('')
       } else {
         alert('No se pudo generar la URL del código de barras.')
         newTab.close()
       }
     } catch (error) {
-      console.error('Error generating barcode:', error)
+      debugger
+      if (axios.isAxiosError(error)) {
+        const errorMsg = error.response?.data?.error || error.message
+        setErrorResponse(errorMsg)
+      } else {
+        console.log('An unknown error occurred', error)
+      }
+      // console.log(error.response.data.error)
+
       alert('Error generating barcode')
       if (newTab) newTab.close()
     } finally {
       setGenerateBarcodeLoader(false)
     }
   }
-
   async function makePayment(data: { amount: number }) {
     try {
       setShowPaymentModal(false)
+      setErrorResponse('')
       alert(`Processing payment of USD ${data.amount} for ${plansDetails.pdn}`)
       // TODO: Add real payment API call here
     } catch (error) {
       console.error('Payment error:', error)
     }
   }
-
   // Handle amount change with parseFloat instead of parseInt
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
@@ -240,18 +259,15 @@ const PlansCard = ({
       setAmount(value === '' ? 0 : parseFloat(value))
     }
   }
-
   const handleConfirmPayment = () => {
     if (plansDetails.Skuid === '0' && amount <= 0) {
       setLocalError('Please enter a valid amount')
       return
     }
-
     if (paymentType === 'barcod' || paymentType === 'card') {
       generateBarcode(paymentType)
     }
   }
-
   return (
     <Fragment>
       <div
@@ -272,27 +288,55 @@ const PlansCard = ({
             alignItems: 'center',
             gap: '10px',
             marginBottom: '10px',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
           }}
         >
-          <Image
-            src={prImage[product]}
-            alt="img"
-            width={isMobile ? 40 : 50}
-            height={isMobile ? 40 : 50}
-            style={{
-              maxWidth: isMobile ? '40px' : '50px',
-              height: 'auto',
-            }}
-          />
-          <span
-            className="fz-18 fw-500"
-            style={{
-              fontSize: isMobile ? '14px' : '16px',
-              fontWeight: '500',
-            }}
-          >
-            {plansDetails.pdn}
-          </span>
+          <div style={{ width: '20%' }}>
+            <Image
+              src={prImage[product]}
+              alt="img"
+              width={isMobile ? 40 : 50}
+              height={isMobile ? 40 : 50}
+              style={{
+                maxWidth: isMobile ? '40px' : '50px',
+                height: 'auto',
+                borderRadius: '3px',
+              }}
+            />
+          </div>
+          <div style={{ width: '80%' }}>
+            <span
+              className="fz-18 fw-500"
+              style={{
+                fontSize: isMobile ? '14px' : '16px',
+                fontWeight: '500',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                display: 'block',
+              }}
+            >
+              {plansDetails?.pdn ?? 'N/A'}
+            </span>
+            {plansDetails?.pdn && plansDetails.pdn.length > 30 && (
+              <span
+                onClick={() => {
+                  setFullPDNText(plansDetails.pdn)
+                  setShowPDNModal(true)
+                }}
+                style={{
+                  color: '#007bff',
+                  fontSize: '12px',
+                  cursor: 'pointer',
+                  marginTop: '4px',
+                  display: 'inline-block',
+                }}
+              >
+                View more
+              </span>
+            )}
+          </div>
         </div>
         <span
           className="usd fz-16"
@@ -304,7 +348,6 @@ const PlansCard = ({
         >
           USD {plansDetails.amt}
         </span>
-
         <div
           className="valu__btn"
           style={{
@@ -335,7 +378,6 @@ const PlansCard = ({
           </div>
         </div>
       </div>
-
       {/* Payment Modal with Store Selection and Amount */}
       <div
         className={`modal fade ${showPaymentModal ? 'show d-block' : ''}`}
@@ -434,6 +476,9 @@ const PlansCard = ({
                       />
                     </div>
                   )}
+                  {errorResponse && (
+                    <div className="m-2 text-danger"> {errorResponse}</div>
+                  )}
 
                   <div className="alert alert-info">
                     <strong>Plan:</strong> {plansDetails.pdn}
@@ -444,7 +489,12 @@ const PlansCard = ({
                       : plansDetails.amt}
                   </div>
 
-                  {localError && <p className="text-danger">{localError}</p>}
+                  {localError && (
+                    <p className="text-danger">
+                      <p className="text-danger">Fixed Plan Top-Up</p>{' '}
+                      {localError}
+                    </p>
+                  )}
                 </div>
               )}
             </div>
@@ -489,6 +539,60 @@ const PlansCard = ({
           </div>
         </div>
       </div>
+
+      {/* Full PDN Modal (copied from first code) */}
+      {showPDNModal && fullPDNText && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000,
+          }}
+          onClick={() => {
+            setShowPDNModal(false)
+            setFullPDNText(null)
+          }}
+        >
+          <div
+            style={{
+              background: '#fff',
+              padding: '20px',
+              borderRadius: '8px',
+              maxWidth: '90%',
+              maxHeight: '80%',
+              overflowY: 'auto',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h5 style={{ marginBottom: '10px' }}>Plan details</h5>
+            <p style={{ fontSize: '16px', margin: '10px' }}>{fullPDNText}</p>
+            <button
+              className="btn btn-primary"
+              type="button"
+              style={{
+                minWidth: isMobile ? '80px' : '100px',
+                textAlign: 'center',
+                padding: isMobile ? '6px' : '8px',
+                display: 'block',
+                fontSize: isMobile ? '0.875rem' : '1rem',
+              }}
+              onClick={() => {
+                setShowPDNModal(false)
+                setFullPDNText(null)
+              }}
+            >
+              <span>Cancel</span>
+            </button>
+          </div>
+        </div>
+      )}
     </Fragment>
   )
 }

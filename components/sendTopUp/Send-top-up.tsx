@@ -6,6 +6,7 @@ import earth from './../../public/img/pngFiles/earth.png'
 import ReactPhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
 import Telcel from '@/public/img/operators/finaltelcel.jpg'
+import AltanLogo from '@/public/img/operators/Altan.jpg'
 import Att from '@/public/img/operators/finalAtt.jpg'
 import ThirdLogo from '@/public/img/operators/finalthird.jpg'
 
@@ -271,9 +272,9 @@ const SendTopUp: React.FC = () => {
               <p className="fw-bold fs-5">Select your operator</p>
               <div className="d-flex justify-content-center gap-3">
                 {[
-                  { src: Telcel, alt: 'TFEMXN_Q' },
-                  { src: Att, alt: 'MVNO' },
-                  { src: ThirdLogo, alt: 'TFESV' },
+                  // { src: Telcel, alt: 'TFESV' },
+                  { src: AltanLogo, alt: 'MVNO' },
+                  { src: ThirdLogo, alt: 'TFEMXN_Q' },
                 ].map((operator, index) => (
                   <Image
                     key={index}
