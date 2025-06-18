@@ -1,7 +1,7 @@
 'use client'
-import FilterOption from './FilterOption'
+import BuyOption from './BuySection'
 import Pagination from '../pagination/Pagination'
-import AllPhoneGrid from './AllPhoneGrid'
+import PhoneSpecification from './PhoneSpecification'
 import { useEffect, useState } from 'react'
 interface Filters {
   priceRange: number[]
@@ -21,16 +21,16 @@ const TrainGridMain = () => {
     console.table(filters)
   }, [filters])
   return (
-    <section className="flight__onewaysection pb__60">
+    <section className="mt-5 pb__60">
       <div className="container">
         <div className="row g-4 justify-content-center">
           <div className="col-xxl-4 col-xl-4 col-lg-4">
             {/* Filter Option Here */}
-            <FilterOption id="train_grid" onFilterChange={setFilters} />
+            <BuyOption />
           </div>
           <div className="col-xxl-8 col-xl-8 col-lg-8">
             {/* All Train Here */}
-            <AllPhoneGrid filters={filters} />
+            <PhoneSpecification />
 
             {/* Pagination Here */}
             {/* <Pagination clss="justify-content-center pt__40" /> */}

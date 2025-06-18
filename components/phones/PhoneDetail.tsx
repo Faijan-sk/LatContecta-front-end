@@ -6,34 +6,28 @@ import NavBar from '../navBar/NavBar2'
 import SearchBar from '@/components/phones/SearchOption'
 import PaymentSponsorSlider from '../slider/PaymentSponsorSlider'
 import electricity from '/public/img/banner/electricity.jpg'
-import PhonePage from '@/components/phones/PhoneGridMain'
+import PhonePage from '@/components/phones/PhonePage'
 import Footer from '../footer/Footer'
+
+// import
+import Link from 'next/link'
 
 const Banner = () => {
   return (
     <section className="banner__section">
       {/* Container */}
+
       <NavBar />
       <div className="container">
-        <div
-          className="fasilities__wrapper pb__40 wow fadeInUp"
-          data-wow-duration="2s"
-        >
-          {/* Home Filter Options */}
-          <HomeFilterOptions />
+        <Link href="/phones/phone2" className="cmn__btn">
+          <span>&larr; </span>
+          <span className="ms-2"> Back</span>
+        </Link>
 
-          <div
-            style={{
-              marginBottom: '50px',
-            }}
-          >
-            <SearchBar />
-          </div>
-
+        <div>
           <PhonePage />
         </div>
       </div>
-      {/* Container */}
 
       <Footer />
     </section>

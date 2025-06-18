@@ -1,15 +1,15 @@
-"use client";
+'use client'
 
-import Image from "next/image";
-import { useRef } from "react";
-import Slider from "react-slick";
-import SliderNavigation from "../common/SliderNavigation";
+import Image from 'next/image'
+import { useRef } from 'react'
+import Slider from 'react-slick'
+import SliderNavigation from '../common/SliderNavigation'
 
-import hqustion1 from "/public/img/slider/hqustion1.jpg";
-import hqustion2 from "/public/img/slider/hqustion2.jpg";
+import hqustion1 from '/public/img/slider/hqustion1.jpg'
+import hqustion2 from '/public/img/slider/hqustion2.jpg'
 
 const HotelFaqSlider = () => {
-  const sliderRef = useRef(null);
+  const sliderRef = useRef(null)
 
   const settings = {
     dots: false,
@@ -18,7 +18,7 @@ const HotelFaqSlider = () => {
     slidesToShow: 2,
     slidesToScroll: 2,
     arrows: false,
-    centerPadding: "0px",
+    centerPadding: '0px',
     responsive: [
       {
         breakpoint: 575,
@@ -27,7 +27,7 @@ const HotelFaqSlider = () => {
         },
       },
     ],
-  };
+  }
   return (
     <div className="hotel__qustionslider owl-theme owl-carousel">
       <Slider {...settings} ref={sliderRef} className="overflow-x-hidden">
@@ -60,7 +60,7 @@ const HotelFaqSlider = () => {
       {/* Slider Navigation */}
       <SliderNavigation sliderRef={sliderRef} arrow="chevron_right" />
     </div>
-  );
-};
+  )
+}
 
-export default HotelFaqSlider;
+export default HotelFaqSlider

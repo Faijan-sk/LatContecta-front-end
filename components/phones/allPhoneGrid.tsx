@@ -269,7 +269,7 @@ const AllPhoneGrid = ({ filters }: AllPhoneGridProps) => {
                           </span>
                         </span>
 
-                        <Link href="/order-summary" className="cmn__btn">
+                        <Link href="/phones/order-detail/" className="cmn__btn">
                           <span>Buy Now</span>
                         </Link>
                       </div>

@@ -1,6 +1,6 @@
 import React from 'react'
 import Banner from './banner'
-import PhoneGridMain from './phoneGridMain'
+import PhoneGridMain from './PhoneGridMain'
 
 function phoneMain() {
   return (
