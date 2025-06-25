@@ -30,11 +30,11 @@ const OrderMain = () => {
                 {/* <Pagination clss="justify-content-center pt__40" /> */}
               </div>
 
-              <div className="probtn text-center pt__40">
+              {/* <div className="probtn text-center pt__40">
                 <Link href="/order-summary" className="cmn__btn">
                   <span>Proceesd to checkout</span>
                 </Link>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

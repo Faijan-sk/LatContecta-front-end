@@ -21,14 +21,13 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
   setAmount,
   generateBarcode,
 }) => {
-  const handleSend =  () => {
-    debugger
+  const handleSend = () => {
     if (!amount || isNaN(amount)) {
       alert('Please enter a valid amount')
       return
     }
-     generateBarcode()
-  
+    generateBarcode()
+
     // onConfirmPayment(data)
   }
 

@@ -72,10 +72,7 @@ const Footer = () => {
                     <Link href="/phones" className="link fz-18 pratext">
                       Buy Phones
                     </Link>
-                    <Link
-                      href="/otherBillPayment"
-                      className="link fz-18 pratext"
-                    >
+                    <Link href="" className="link fz-18 pratext">
                       Bill Payments
                     </Link>
                   </div>

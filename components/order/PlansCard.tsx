@@ -160,7 +160,7 @@ const PlansCard = ({
   }
   async function logingUser() {
     try {
-      const requestBody = distributerDetails.liveTwo
+      const requestBody = distributerDetails.local
       const { data } = await axiosInstance.post('/dislogin', {
         ...requestBody,
       })
@@ -226,7 +226,6 @@ const PlansCard = ({
         newTab.close()
       }
     } catch (error) {
-      debugger
       if (axios.isAxiosError(error)) {
         const errorMsg = error.response?.data?.error || error.message
         setErrorResponse(errorMsg)
@@ -241,6 +240,7 @@ const PlansCard = ({
       setGenerateBarcodeLoader(false)
     }
   }
+
   async function makePayment(data: { amount: number }) {
     try {
       setShowPaymentModal(false)
