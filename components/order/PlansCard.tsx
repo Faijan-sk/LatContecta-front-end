@@ -161,9 +161,12 @@ const PlansCard = ({
   async function logingUser() {
     try {
       const requestBody = distributerDetails.local
-      const { data } = await axiosInstance.post('/dislogin', {
-        ...requestBody,
-      })
+      const { data } = await axiosInstance.get(
+        '/get_token/'
+        //   {
+        //   ...requestBody,
+        // }
+      )
       const { access } = data as { access: string }
       localStorage.setItem('access', access)
     } catch (error) {
@@ -208,6 +211,7 @@ const PlansCard = ({
         )
         return
       }
+
       // Make API call to generate barcode
       const res = await axiosInstance.post('/generate-barcode/', {
         msisdn,

@@ -135,14 +135,12 @@ const SendTopUp: React.FC = () => {
 
     setFetchPlanLoader('Searching Plans...')
     try {
+      localStorage.removeItem('access')
       const params = `/get_prod/`
       const res = await axiosInstance.post(params, body)
-
       const { data } = res
       const { msisdn_info, products } = data
-
       setFetchPlanLoader('Fetching plans...')
-
       setTimeout(() => {
         dispatch(
           addPlans({
@@ -204,7 +202,6 @@ const SendTopUp: React.FC = () => {
               {errors.cuy}
             </div>
           )}
-
           <div
             className="border rounded-3 bg-light text-center p-4 mt-3 mx-auto"
             style={{
@@ -264,7 +261,6 @@ const SendTopUp: React.FC = () => {
                 {errors.msisdn}
               </div>
             )}
-
             <div
               className="operator__texts d-flex flex-column align-items-center text-center mt-3"
               style={{ width: '100%' }}
@@ -302,8 +298,8 @@ const SendTopUp: React.FC = () => {
                 </div>
               )}
             </div>
-
-            <div className="mt-3 sigin__grp d-flex justify-content-center">
+      o
+      <div className="mt-3 sigin__grp d-flex justify-content-center">
               <button
                 className="cmn__btn no-underline"
                 onClick={handleSend}
